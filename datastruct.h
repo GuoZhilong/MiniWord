@@ -89,9 +89,9 @@ public:
        tailnode = NULL;
        lines = 0;
     }
-	Text(std::string Filename) {
-		this->Text_Set(Filename);	
-	}
+		Text(std::string Filename) {
+			this->Text_Set(Filename);
+		}
     ~Text(){//析构函数
         TextNode *curnode = headnode;
         while(curnode){
@@ -105,7 +105,7 @@ public:
     void New_File();
     void Save_File(bool Name_Choice);
     void Quit_File();
-    void Text_Set(std::string Filename);//根据提供文件名创建此类
+    bool Text_Set(std::string Filename);//根据提供文件名创建此类
     bool Insert(int line, int position, std::string s);//向文本中某行某位置插入字符串
     bool Delete(int line, int position);//删除某行某位置的一个字符
     bool Index(std::string string_aim, int line, int position, int &aimline, int &aimposition);//从某行某位置后面开始匹配目标字符串，若成功则返回字串的头位置。
@@ -127,6 +127,15 @@ public:
         headnode = new TextNode;
         tailnode = headnode;
     }
+		int Get_Max_Length(){
+				int max_length = 0;
+				TextNode *cur = headnode;
+				while(cur){
+					max_length = max_length > cur->length ? max_length : cur->length;
+					cur = cur->nextnode;
+				}
+				return max_length;
+		}
 private:
     std::fstream file;//文件
     std::string filename;//当前文件名
@@ -135,4 +144,3 @@ private:
     int lines;//行数
     Block block_text;//块
 };
-
