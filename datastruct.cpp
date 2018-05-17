@@ -65,14 +65,15 @@ int TextNode::Index(std::string string_aim, int position){
 }
 ///////////////////////Text 成员
 
-void Text::Text_Set(std::string Filename){
-
+bool Text::Text_Set(std::string Filename){
+		filename = Filename;
     file.close();
     file.open(Filename, std::fstream::in);
     if(!file){
         file.open(Filename, std::ios_base::out);
         headnode = new TextNode;
         tailnode = headnode;
+				return 0;
     }
     else{ std::string s;
         while(std::getline(file, s)){
@@ -86,6 +87,7 @@ void Text::Text_Set(std::string Filename){
             tailnode->Input(s);
             ++lines;
         }
+				return 1;
 
     }
 }
@@ -215,22 +217,3 @@ bool Text::Replace(std::string string_aim, std::string string_replace, int posit
     }
     return 0 ;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
