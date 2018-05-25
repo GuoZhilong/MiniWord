@@ -111,14 +111,17 @@ private:
 
 
 
+
 class Cursor{
 private:
     int line;
     int position;
+    int English;
+    int Chinese;
 public:
     friend class Text;
-    Cursor():line(1), position(1){}
-    Cursor(int l, int p): line(l), position(p){}
+    Cursor():line(1), position(1), English(0), Chinese(0){}
+    Cursor(int l, int p): line(l), position(p), English(0), Chinese(0){}
 };
 
 
@@ -148,10 +151,13 @@ public:
         }
         file.close();
     }
+       void Remove_BOM(char *buffer);
+    void Add_BOM(char *buffer);
+    void Cursor_Set(int l,int p){cursor=Cursor(l,p);};//测试用，删
     void InputFilename();
-    void New_File();
-    void Save_File(bool Name_Choice);
-    void Quit_File();
+    void New_File(std::string File_Name);
+    void Save_File(std::string New_Name);
+	void Quit_File();
     bool Text_Set(std::string Filename);//根据提供文件名创建此类
     bool Replace(std::string string_aim, std::string string_replace, int position, int line);//从某行某位置后面开始匹配目标字符串并把其用另一个串代替
     bool Index(std::string string_aim, int line, int position, int &aimline, int &aimposition);//从某行某位置后面开始匹配目标字符串，若成功则返回字串的头位置。
