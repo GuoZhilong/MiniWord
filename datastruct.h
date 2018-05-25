@@ -139,9 +139,8 @@ public:
         }
         file.close();
         filename ="";
-        lines = 1 ;
-        headnode = new TextNode;
-        tailnode = headnode;
+        lines = 0 ;
+        headnode = tailnode = NULL;
     }
     int Get_Max_Length(){
         int max_length = 0;
