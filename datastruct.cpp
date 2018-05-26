@@ -26,12 +26,14 @@ void TextNode::Extend(){
     end = end->next_block;
 }
 void TextNode::Renew(){
-    if ((length - 1) / SIZE + 1 == size / SIZE)
+    if(!end)
         return;
-    TextBlock *cur = first;
-    for (int i = 0; i < (length-1)/SIZE; ++i) {
-        cur = cur->next_block;
-    }
+	if ((length - 1) / SIZE + 1 == size / SIZE)
+		return;
+	TextBlock *cur = first;
+	for (int i = 0; i < (length-1)/SIZE; ++i) {
+		cur = cur->next_block;
+	}
     end = cur;
     TextBlock *next = cur->next_block;
     cur->next_block = NULL;
@@ -74,7 +76,8 @@ bool Text::Text_Set(std::string Filename){
         headnode = new TextNode;
         tailnode = headnode;
            file.close();
-           return 0;
+        lines = 1;
+        return 0;
     }
     else{ std::string s;
         while(std::getline(file, s)){
@@ -89,7 +92,7 @@ bool Text::Text_Set(std::string Filename){
             ++lines;
         }
            file.close();
-           return 1;
+				return 1;
 
     }
 }
