@@ -33,7 +33,8 @@ SOURCES += \
     d_insert.cpp \
     d_replace.cpp \
     d_save.cpp \
-    d_new.cpp
+    d_new.cpp \
+    FileOperation.cpp
 
 HEADERS += \
         mainwindow.h \

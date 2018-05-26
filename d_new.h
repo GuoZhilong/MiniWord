@@ -15,6 +15,12 @@ public:
     explicit d_new(QWidget *parent = 0);
     ~d_new();
 
+signals:
+    void sendfilename(QString);
+
+private slots:
+    void on_buttonBox_accepted();
+
 private:
     Ui::d_new *ui;
 };
