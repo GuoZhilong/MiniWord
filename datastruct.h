@@ -193,6 +193,15 @@ public:
     }
     bool Block_Set(int line_begin, int position_begin, int line_end,  int positon_end);//设置块
     void Block_Delete(int line_begin, int position_begin, int line_end,  int positon_end);//删除块
+    int isCursorBehind();//真实光标在后返回1  真实光标在前返回-1  两者重叠返回0
+    void cursor_reset(){
+        chunk=false;
+        cursor.line=1;
+        cursor.position=1;
+        cursor.Chinese=0;
+        cursor.English=0;
+        cursor_virtual=cursor;
+    }
 private:      
     std::fstream file;//文件
     std::string filename;//当前文件名
@@ -201,6 +210,8 @@ private:
     int lines;//行数
     Block block;//块
     Cursor cursor;
+    Cursor cursor_virtual;
+    bool chunk;
     bool Insert(int line, int position, std::string s);//向文本中某行某位置插入字符串
     bool Delete(int line, int position);//删除某行某位置的一个字符
 
