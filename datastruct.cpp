@@ -200,7 +200,7 @@ bool Text::Index(std::string string_aim, int line, int position, int &aimline, i
         TextNode *curnode = headnode;
         for(int i = 1; i < line ; ++i)
             curnode = curnode->nextnode;
-        if(position > 0 && position <= curnode->length){
+        if(position > 0 && position <= curnode->length + 1){
             aimposition = curnode->Index(string_aim, position);
             if(aimposition)
                    return 1;
