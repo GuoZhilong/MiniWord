@@ -68,7 +68,8 @@ int TextNode::Index(std::string string_aim, int position){
 ///////////////////////Text 成员
 
 bool Text::Text_Set(std::string Filename){
-        filename = Filename;
+	cursor_reset();
+    filename = Filename;
     file.close();
     file.open(Filename, std::fstream::in);
     if(!file){
