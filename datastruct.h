@@ -161,15 +161,22 @@ public:
     void New_File(std::string File_Name);
     void Save_File(std::string New_Name);
 	void Quit_File();
+	
+	
     bool Text_Set(std::string Filename);//根据提供文件名创建此类
     bool Replace(std::string string_aim, std::string string_replace, int position, int line);//从某行某位置后面开始匹配目标字符串并把其用另一个串代替
     bool Index(std::string string_aim, int line, int position, int &aimline, int &aimposition);//从某行某位置后面开始匹配目标字符串，若成功则返回字串的头位置。
+	bool Index_second_edition(std::string string_aim, int line, int position, int &aimline, int &aimposition);
+	
+	
     void MoveCursor(direction dir);
     void Insert_at_Cursor(std::string s);
     void Delete_at_Cursor(direction dir);
     void MoveCursor_to_start();
     void MoveCursor_to_end();
     void Count_CE();
+	
+	
     void Output();//输出文本全部内容
     void Clear(){//清除数据
         TextNode *curnode = headnode;
@@ -193,8 +200,12 @@ public:
         }
         return max_length;
     }
+	
+	
     bool Block_Set(int line_begin, int position_begin, int line_end,  int positon_end);//设置块
     void Block_Delete(int line_begin, int position_begin, int line_end,  int positon_end);//删除块
+	
+	
     int isCursorBehind();//真实光标在后返回1  真实光标在前返回-1  两者重叠返回0
     void cursor_reset(){
         chunk=false;
@@ -208,6 +219,8 @@ public:
     void BlokCopy_at_Cursor();
     void BlockDelete_at_Cursor();
     void Cut_at_Cursor();
+	
+	
 private:      
     std::fstream file;//文件
     std::string filename;//当前文件名

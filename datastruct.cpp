@@ -231,6 +231,65 @@ bool Text::Replace(std::string string_aim, std::string string_replace, int posit
     return 0 ;
 }
 
+
+bool Text::Index_second_edition(std::string string_aim, int line, int position, int &aimline, int &aimposition){
+    if(line <= lines){
+        aimposition = 0;
+        aimline = line;
+        TextNode *curnode = headnode;
+        for(int i = 1; i < line ; ++i)
+            curnode = curnode->nextnode;
+        if(position > 0 && position <= curnode->length + 1){
+            int j=1;   int k=0;
+            int* next = new int[string_aim.length()];
+            next[0]=0;
+            while( j<string_aim.length() ) {
+                 if  ( k==0 || string_aim[j-1]==string_aim[k-1] )
+                        { ++j;   ++k;   next[j-1]=k;  }
+                   else    k= next[k-1];
+            }
+            int i = aimposition;
+            while( curnode && i > curnode->length ){
+                i = 1;
+                curnode = curnode->nextnode;
+                ++aimline;
+            }
+            j = 1;
+            while  (curnode && j <= string_aim.length()){
+                  if  ( j==0   ||  (*curnode)[i-1]==string_aim[j-1]){
+                            i++;
+                            j++;
+                            while( curnode && i > curnode->length ){
+                                if(!curnode->length){
+                                    j = 1;
+                                }
+                                i = 1;
+                                curnode = curnode->nextnode;
+                                ++aimline;
+                            }
+                  }
+                  else  j=next[j-1];
+             }
+         if   (j>string_aim.length()){
+             while(j > 1){
+                 --j;
+                 --i;
+                 if(i < 1){
+                     --aimline;
+                     i = (*this)[aimline].length;
+                 }
+             }
+                aimposition = i;
+                return 1;
+          }
+          else
+            return 0;
+        }
+    }
+    return 0;
+}
+
+
 bool Text::Block_Set(int line_begin, int position_begin, int line_end,  int positon_end){//起始行，结束行，起始位置，结束位置+1。位置从1开始计数。
     if(line_begin > lines || line_end > lines)
         return 0;
