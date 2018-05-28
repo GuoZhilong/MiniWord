@@ -281,7 +281,7 @@ void Text::Block_Delete(int line_begin, int position_begin, int line_end, int po
         while(cur_line != line_end){
             TextNode *next = cur->nextnode;
             delete cur;
-            cur = cur->nextnode;
+            cur = next;
             ++cur_line;
         }
         pre->nextnode = cur;
