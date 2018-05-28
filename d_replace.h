@@ -16,10 +16,13 @@ public:
     ~d_replace();
 signals:
     void send_replace_message(QString,QString);
+    void send_find_message(QString);
 private slots:
     void on_pushButton_clicked();
 
     void on_pushButton_2_clicked();
+
+    void on_pushButton_3_clicked();
 
 private:
     Ui::d_replace *ui;

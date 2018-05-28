@@ -13,3 +13,15 @@ d_find::~d_find()
 {
     delete ui;
 }
+
+void d_find::on_buttonBox_accepted()
+{
+    QString s;
+    s=ui->lineEdit->text();
+    emit send_find_message(s);
+}
+
+void d_find::on_buttonBox_rejected()
+{
+    this->close();
+}

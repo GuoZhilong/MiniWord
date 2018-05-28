@@ -61,6 +61,7 @@
    <addaction name="menu_4"/>
    <addaction name="menu_2"/>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionNew">
    <property name="text">
     <string>新建(ctrl+N)</string>

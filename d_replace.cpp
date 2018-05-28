@@ -26,5 +26,11 @@ void d_replace::on_pushButton_clicked()
 void d_replace::on_pushButton_2_clicked()
 {
     this->close();
+}
 
+void d_replace::on_pushButton_3_clicked()
+{
+    QString s;
+    s=ui->lineEdit->text();
+    emit send_find_message(s);
 }

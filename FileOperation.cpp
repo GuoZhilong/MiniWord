@@ -2,10 +2,12 @@
 
 void Text::New_File(std::string File_Name){
     //新建文件
+    cursor_reset();
     filename = File_Name;
     file.open(File_Name, std::ios_base::out);
     headnode = new TextNode;
     tailnode = headnode;
+    lines=1;
     file.close();
 }
 
@@ -38,10 +40,9 @@ void Text::Save_File(std::string New_Name){
         file<<std::endl;
         cur_node=cur_node->nextnode;
     }
-    file.close();
+    file.close(); 
     std::rename(filename.c_str(),New_Name.c_str());
     this->filename=New_Name;
-
 }
 
 
@@ -50,7 +51,7 @@ void Text::Quit_File(){
     file.close();
 }
 
-void Text::Remove_BOM(char *buffer){
+/*void Text::Remove_BOM(char *buffer){
     if(lines!=0){
         headnode->length-=3;
         for(int i=0;i<headnode->length;i++){
@@ -60,22 +61,19 @@ void Text::Remove_BOM(char *buffer){
                     (*headnode)[i]='\0';
             }
             (*headnode)[i]=(*headnode)[i+3];
-
         }
-
     }
 }
 
 void Text::Add_BOM(char *buffer){
     if(lines!=0){
         for(int i=0;i<3;i++){
-
             if((*headnode)[i])
                 (*headnode)[i+3]=(*headnode)[i];
             (*headnode)[i]=buffer[i];
         }
     }
-}
+}*/
 
 void Text::Count_CE(){
     char ch;
@@ -115,22 +113,9 @@ void Text::MoveCursor(direction dir){
                 for(int i=1;i<cur_line;i++){
                     cur_node=cur_node->nextnode;
                 }
-                //计算中英文字符个数
-                for(int i=0;i<cur_node->length;){
-                    ch=(*cur_node)[i];
-                    if(ch<0){//中文字符
-                        cursor.Chinese++;
-                        i+=3;
-                    }
-                    else{
-                        cursor.English++;
-                        i++;
-                    }
-                }
                 cursor.position=cur_node->length+1;
                 cursor.line=cur_line;
             }
-
         }
         else{
             for(int i=1;i<cur_line;i++){
@@ -142,23 +127,21 @@ void Text::MoveCursor(direction dir){
                 cursor.position+=3;
             }*/
             //光标右移同时记录前一位置
-            while(cur_position!=cursor.position){
+            while(cur_position<cursor.position){
                 pre_position=cur_position;
                 ch=(*cur_node)[cur_position-1];
-
                 if(ch<0){//中文字符
-                    cursor.Chinese++;
                     cur_position+=3;
                 }
                 else{
-                    cursor.English++;
                     cur_position++;
                 }
-
             }
             cursor.line=cur_line;
             cursor.position=pre_position;
         }
+        //计算中英文字符个数
+        Count_CE();
     }
 
     else if(dir==right){
@@ -183,25 +166,12 @@ void Text::MoveCursor(direction dir){
             else{
                 cursor.position++;
             }
-            //计算中英文字符个数
-            cur_position=1;
-            while(cur_position!=cursor.position){
-                pre_position=cur_position;
-                ch=(*cur_node)[cur_position-1];
-                if(ch<0){//中文字符
-                    cursor.Chinese++;
-                    cur_position+=3;
-                }
-                else{
-                    cursor.English++;
-                    cur_position++;
-                }
-            }
         }
+        //计算中英文字符个数
+        Count_CE();
     }
 
     else if(dir==up){
-
         cur_line=cursor.line;
         if(cur_line!=1){
             for(int i=1;i<cur_line;i++){
@@ -212,7 +182,6 @@ void Text::MoveCursor(direction dir){
             pre_position=1;
             cur_position=1;
             //找到当前行打印长度cur_len
-
             while(cur_position!=cursor.position){
                 ch=(*cur_node)[cur_position-1];
                 if(ch<0){//中文字符
@@ -224,7 +193,6 @@ void Text::MoveCursor(direction dir){
                     cur_position++;
                 }
             }
-           // std::cout<<"cur_len="<<cur_len<<std::endl;
             //找出上一行对应位置pre_position
             while(cur_len>0&&(pre_position<=pre_node->length)){
                 ch=(*pre_node)[pre_position-1];
@@ -239,7 +207,6 @@ void Text::MoveCursor(direction dir){
                     cur_len--;
                 }
             }
-
             cursor.position=pre_position;
             cursor.line--;
         }
@@ -294,7 +261,6 @@ void Text::Insert_at_Cursor(std::string s){
 
     TextNode *cur_node=headnode;
     char ch;
-
     for(int i=1;i<cursor.line;i++){
         cur_node=cur_node->nextnode;
     }
@@ -315,20 +281,126 @@ void Text::Insert_at_Cursor(std::string s){
         }
     }
     //计算中英文字符个数
-    cursor.Chinese=0;
-    cursor.English=0;
-    int cur_position=1;
-    while(cur_position<cursor.position){
-        ch=(*cur_node)[cur_position-1];
-        if(ch<0){//中文字符
-            cursor.Chinese++;
-            cur_position+=3;
+    Count_CE();
+}
+
+void Text::Delete_at_Cursor(direction dir){
+    int pre_position,cur_position;
+    int cur_line=cursor.line;
+    TextNode *cur_node=headnode;
+    TextNode *pre_node=headnode;
+    char ch;
+    if(dir==left){//Backspace
+        for(int i=1;i<cur_line;i++){
+            pre_node=cur_node;
+            cur_node=cur_node->nextnode;
+        }
+        if(cursor.position==1&&cursor.line==1){//第一行行首
+            cur_position=1;
         }
         else{
-            cursor.English++;
-            cur_position++;
+            if(cursor.position==1&&cursor.line!=1){//非第一行行首
+                cursor.line--;
+                cur_position=cursor.position;
+                cursor.position=pre_node->length+1;
+                Delete(cur_line,cur_position-1);
+            }
+            else{
+                cur_position=1;
+                while(cur_position<cursor.position){
+                    pre_position=cur_position;
+                    ch=(*cur_node)[cur_position-1];
+                    if(ch<0){//中文字符
+                        cur_position+=3;
+                    }
+                    else{
+                        cur_position++;
+                    }
+                }
+                if(ch<0)
+                    for(int i=0;i<3;i++,cur_position--)
+                        Delete(cur_line,cur_position-1);
+                else
+                    Delete(cur_line,cur_position-1);
+                cursor.position=pre_position;
+            }
         }
+        Count_CE();
     }
+
+    else if(dir==right){//Delete
+        for(int i=1;i<cur_line;i++){
+            cur_node=cur_node->nextnode;
+        }
+        if(cursor.line!=lines||cursor.position!=cur_node->length+1){//不在最后一行行尾
+            if(cursor.position==cur_node->length+1){//非最后一行行尾
+                cur_line++;
+                cur_position=1;
+                Delete(cur_line,cur_position-1);
+            }
+            else{//非行尾
+                cur_position=cursor.position;
+                ch=(*cur_node)[cur_position-1];
+                if(ch<0){//中文字符
+                    cur_position+=3;
+                    for(int i=0;i<3;i++,cur_position--)
+                        Delete(cur_line,cur_position-1);
+                }
+                else{
+                    cur_position++;
+                    Delete(cur_line,cur_position-1);
+                }
+            }
+        }
+        Count_CE();
+    }
+
+}
+
+void Text::Index_at_Cursor(std::string string_aim){
+    int aim_line,aim_position;
+    if(Index(string_aim,cursor.line,cursor.position,aim_line,aim_position)!=0){
+        cursor.line=aim_line;
+        cursor.position=aim_position;
+    }
+    Count_CE();
+}
+
+void Text::BlokCopy_at_Cursor(){
+    if(isCursorBehind()==-1){//真实光标在前，虚拟光标在后
+        Block_Set(cursor.line,cursor.position,cursor_virtual.line,cursor_virtual.position);
+    }
+    else if(isCursorBehind()==1){//虚拟光标在前，真实光标在后
+        Block_Set(cursor_virtual.line,cursor_virtual.position,cursor.line,cursor.position);
+    }
+    Count_CE();
+}
+
+void Text::BlockDelete_at_Cursor(){
+    if(isCursorBehind()==-1){//真实光标在前，虚拟光标在后
+        Block_Delete(cursor.line,cursor.position,cursor_virtual.line,cursor_virtual.position);
+    }
+    else if(isCursorBehind()==1){//虚拟光标在前，真实光标在后
+        Block_Delete(cursor_virtual.line,cursor_virtual.position,cursor.line,cursor.position);
+        cursor.line=cursor_virtual.line;
+        cursor.position=cursor_virtual.position;
+
+    }
+    Count_CE();
+}
+
+void Text::Cut_at_Cursor(){
+    if(isCursorBehind()==-1){//真实光标在前，虚拟光标在后
+        Block_Set(cursor.line,cursor.position,cursor_virtual.line,cursor_virtual.position);
+        Block_Delete(cursor.line,cursor.position,cursor_virtual.line,cursor_virtual.position);
+    }
+    else if(isCursorBehind()==1){//虚拟光标在前，真实光标在后
+        Block_Set(cursor_virtual.line,cursor_virtual.position,cursor.line,cursor.position);
+        Block_Delete(cursor_virtual.line,cursor_virtual.position,cursor.line,cursor.position);
+        cursor.line=cursor_virtual.line;
+        cursor.position=cursor_virtual.position;
+    }
+    Count_CE();
 }
 
 void Text::MoveCursor_to_start(){
@@ -339,39 +411,36 @@ void Text::MoveCursor_to_start(){
 
 void Text::MoveCursor_to_end(){
     TextNode *cur_node=headnode;
-    char ch;
     cursor.Chinese=0;
     cursor.English=0;
     for(int i=1;i<cursor.line;i++){
         cur_node=cur_node->nextnode;
     }
     cursor.position=cur_node->length+1;
-    int cur_position=1;
-    while(cur_position<cursor.position){
-        ch=(*cur_node)[cur_position-1];
-        if(ch<0){//中文字符
-            cursor.Chinese++;
-            cur_position+=3;
-        }
-        else{
-            cursor.English++;
-            cur_position++;
-        }
-    }
+    Count_CE();
 }
+
+
+/*void Text::Loc_Mouse_Cursor(){
+
+}*/
 
 /*int main()
 {
     Text T;
-    T.Text_Set("F:\\ccy.txt");
+    T.Text_Set("G:\\ccy.txt");
     T.Output();
     //T.Remove_BOM(buffer);
-    //T.Output();
-    T.Cursor_Set(2,31);
-    T.MoveCursor(T.up);
+
+    T.Cursor_Set(1,47);
+    T.Cursor_Set_V(2,4);
+    //T.MoveCursor(T.right);
     //T.Insert_at_Cursor("dad ad你好");
+    //T.Delete_at_Cursor(T.right);
+    //T.Index_at_Cursor("au");
+    T.BlockDelete_at_Cursor();
     //T.MoveCursor_to_end();
+    T.Output();
     //T.Save_File("G:\\gzl.txt");
     return 0;
 }*/
-

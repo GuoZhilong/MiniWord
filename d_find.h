@@ -14,6 +14,12 @@ class d_find : public QDialog
 public:
     explicit d_find(QWidget *parent = 0);
     ~d_find();
+signals:
+    void send_find_message(QString);
+private slots:
+    void on_buttonBox_accepted();
+
+    void on_buttonBox_rejected();
 
 private:
     Ui::d_find *ui;

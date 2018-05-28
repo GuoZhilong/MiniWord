@@ -28,12 +28,12 @@ void TextNode::Extend(){
 void TextNode::Renew(){
     if(!end)
         return;
-	if ((length - 1) / SIZE + 1 == size / SIZE)
-		return;
-	TextBlock *cur = first;
-	for (int i = 0; i < (length-1)/SIZE; ++i) {
-		cur = cur->next_block;
-	}
+    if ((length - 1) / SIZE + 1 == size / SIZE)
+        return;
+    TextBlock *cur = first;
+    for (int i = 0; i < (length-1)/SIZE; ++i) {
+        cur = cur->next_block;
+    }
     end = cur;
     TextBlock *next = cur->next_block;
     cur->next_block = NULL;
@@ -68,7 +68,7 @@ int TextNode::Index(std::string string_aim, int position){
 ///////////////////////Text 成员
 
 bool Text::Text_Set(std::string Filename){
-	cursor_reset();
+    cursor_reset();
     filename = Filename;
     file.close();
     file.open(Filename, std::fstream::in);
@@ -93,7 +93,7 @@ bool Text::Text_Set(std::string Filename){
             ++lines;
         }
            file.close();
-				return 1;
+                return 1;
 
     }
 }
@@ -281,6 +281,7 @@ void Text::Block_Delete(int line_begin, int position_begin, int line_end, int po
         while(cur_line != line_end){
             TextNode *next = cur->nextnode;
             delete cur;
+            --lines;
             cur = next;
             ++cur_line;
         }

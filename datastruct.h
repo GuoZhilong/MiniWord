@@ -74,7 +74,9 @@ public:
 
 
 class Block{//指示文本中一块内容的类
-public: friend class Text;
+public:
+    friend class Text;
+    friend class MainWindow;
     Block(){
         line_begin = line_end = position_begin = position_end = 0;
     }
@@ -202,6 +204,10 @@ public:
         cursor.English=0;
         cursor_virtual=cursor;
     }
+    void Index_at_Cursor(std::string string_aim);
+    void BlokCopy_at_Cursor();
+    void BlockDelete_at_Cursor();
+    void Cut_at_Cursor();
 private:      
     std::fstream file;//文件
     std::string filename;//当前文件名
