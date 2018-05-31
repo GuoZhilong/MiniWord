@@ -1,54 +1,54 @@
 #include "datastruct.h"
 
 void TextNode::Input(std:: string s){
-    TextBlock *cur = first;
+	TextBlock *cur = first;
     for (int i = 0; i < s.length(); i = i + SIZE) {
-        if (!cur) {
-            Extend();
-            cur = end;
-        }
+		if (!cur) {
+			Extend();
+			cur = end;
+		}
         for (int j = i; j < i + SIZE && j < s.length(); ++j) {
-            cur->text[j - i] = s[j];
-        }
-        cur = cur->next_block;
-    }
-    length = s.length();
+			cur->text[j - i] = s[j];
+		}
+		cur = cur->next_block;
+	}
+	length = s.length();
 }
 void TextNode::Extend(){
-    if (!first) {
-        first = new TextBlock;
-        end = first;
+	if (!first) {
+		first = new TextBlock;
+		end = first;
         size += SIZE;
-        return;
-    }
+		return;
+	}
     size += SIZE;
-    end->next_block = new TextBlock;
-    end = end->next_block;
+	end->next_block = new TextBlock;
+	end = end->next_block;
 }
 void TextNode::Renew(){
     if(!end)
         return;
-    if ((length - 1) / SIZE + 1 == size / SIZE)
-        return;
-    TextBlock *cur = first;
-    for (int i = 0; i < (length-1)/SIZE; ++i) {
-        cur = cur->next_block;
-    }
+	if ((length - 1) / SIZE + 1 == size / SIZE)
+		return;
+	TextBlock *cur = first;
+	for (int i = 0; i < (length-1)/SIZE; ++i) {
+		cur = cur->next_block;
+	}
     end = cur;
-    TextBlock *next = cur->next_block;
+	TextBlock *next = cur->next_block;
     cur->next_block = NULL;
     cur = next;
-    while (cur) {
+	while (cur) {
         next = cur->next_block;
-        delete cur;
+		delete cur;
         cur = next;
 
-    }
-    size = ((length - 1) / SIZE + 1)*SIZE;
+	}
+	size = ((length - 1) / SIZE + 1)*SIZE;
 }
 int TextNode::Index(std::string string_aim, int position){
        int j=1;   int k=0;
-       int* next = new int[string_aim.length()];
+	   int* next = new int[string_aim.length()];
        next[0]=0;
        while( j<string_aim.length() ) {
             if  ( k==0 || string_aim[j-1]==string_aim[k-1] )
@@ -219,19 +219,6 @@ bool Text::Index(std::string string_aim, int line, int position, int &aimline, i
     return 0;
 }
 
-bool Text::Replace(std::string string_aim, std::string string_replace, int position, int line){
-    int aimline, aimposition;
-    if(Index(string_aim,line,position,aimline,aimposition)){
-        int l = string_aim.length();
-        for(int i = 0; i<l;++i)
-            Delete(aimline, aimposition);
-        Insert(aimline,aimposition,string_replace);
-        return 1;
-    }
-    return 0 ;
-}
-
-
 bool Text::Index_second_edition(std::string string_aim, int line, int position, int &aimline, int &aimposition){
     if(line <= lines){
         aimposition = 0;
@@ -248,8 +235,8 @@ bool Text::Index_second_edition(std::string string_aim, int line, int position, 
                         { ++j;   ++k;   next[j-1]=k;  }
                    else    k= next[k-1];
             }
-            int i = aimposition;
-            while( curnode && i > curnode->length ){
+            int i = position;
+            while(curnode && i > curnode->length){
                 i = 1;
                 curnode = curnode->nextnode;
                 ++aimline;
@@ -259,6 +246,8 @@ bool Text::Index_second_edition(std::string string_aim, int line, int position, 
                   if  ( j==0   ||  (*curnode)[i-1]==string_aim[j-1]){
                             i++;
                             j++;
+                            if(j > string_aim.length())
+                                break;
                             while( curnode && i > curnode->length ){
                                 if(!curnode->length){
                                     j = 1;
@@ -289,6 +278,31 @@ bool Text::Index_second_edition(std::string string_aim, int line, int position, 
     return 0;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+bool Text::Replace(std::string string_aim, std::string string_replace, int position, int line){
+    int aimline, aimposition;
+    if(Index(string_aim,line,position,aimline,aimposition)){
+        int l = string_aim.length();
+        for(int i = 0; i<l;++i)
+            Delete(aimline, aimposition);
+        Insert(aimline,aimposition,string_replace);
+        return 1;
+    }
+    return 0;
+}
 
 bool Text::Block_Set(int line_begin, int position_begin, int line_end,  int positon_end){//起始行，结束行，起始位置，结束位置+1。位置从1开始计数。
     if(line_begin > lines || line_end > lines)

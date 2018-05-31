@@ -216,11 +216,22 @@ public:
         cursor_virtual=cursor;
     }
     void Index_at_Cursor(std::string string_aim);
+    void Index_at_Cursor_2(std::string string_aim);
     void BlokCopy_at_Cursor();
     void BlockDelete_at_Cursor();
     void Cut_at_Cursor();
-	
-	
+
+
+
+    TextNode& operator[](int row){
+           int i = 1;
+           TextNode* cur = headnode;
+           while(i < row){
+               cur = cur->nextnode;
+               ++i;
+           }
+           return *cur;
+       }
 private:      
     std::fstream file;//文件
     std::string filename;//当前文件名
